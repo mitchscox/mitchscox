@@ -1,6 +1,7 @@
 package org.example;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+// This will be needed if we add object mapper , see comment in field declaration
+//import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.jms.*;
 import java.io.File;
@@ -15,13 +16,16 @@ public class JsonFileProcessor {
     private final ConnectionFactory connectionFactory;
     private final String inputDir;
     private final String outputDir;
-    private final ObjectMapper objectMapper;
+    // The following will be needed if we want to process the data here
+    // Such use cases would be header incrementing or file incrementing
+    // private final ObjectMapper objectMapper;
 
     public JsonFileProcessor(ConnectionFactory connectionFactory, String inputDir, String outputDir) {
         this.connectionFactory = connectionFactory;
         this.inputDir = inputDir;
         this.outputDir = outputDir;
-        this.objectMapper = new ObjectMapper();
+        // see declarations comment
+        //this.objectMapper = new ObjectMapper();
     }
 
     public void processFiles() throws JMSException, IOException {
