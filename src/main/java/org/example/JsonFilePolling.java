@@ -19,7 +19,8 @@ public class JsonFilePolling {
 
             while (true) {
                 WatchKey key = watchService.poll(10, TimeUnit.SECONDS);
-
+                System.out.println("Polling ");
+                System.out.println("Key = " +key);
                 if (key != null) {
                     for (WatchEvent<?> event : key.pollEvents()) {
                         WatchEvent.Kind<?> kind = event.kind();
