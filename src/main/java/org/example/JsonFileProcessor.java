@@ -1,10 +1,8 @@
 package org.example;
 
 import javax.jms.*;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 
@@ -62,8 +60,7 @@ public class JsonFileProcessor {
                         if (Files.isRegularFile(filePath) && fileName.toString().endsWith(".json")) {
                             System.out.println("Im processing a file");
                             sendFileToQueue(filePath);
-                            //moveFileToOutputDir(filePath);
-                                 processAndMoveFile(filePath, outputDir);
+                            processAndMoveFile(filePath, outputDir);
                         }
                     }
 
@@ -91,12 +88,7 @@ public class JsonFileProcessor {
             System.out.println("Sent file to queue: " + file);
 
     }
-    /*
-    private void moveFileToOutputDir(Path file) throws IOException {
-        Path targetPath = new File(outputDir, file.getName()).toPath();
-        Files.move(file.toPath(), targetPath, StandardCopyOption.REPLACE_EXISTING);
-        System.out.println("Moved file to output directory: " + file);
-    }*/
+
     private static void processAndMoveFile(Path filePath, Path outputDir) {
         try {
             Path targetPath = outputDir.resolve(filePath.getFileName());
