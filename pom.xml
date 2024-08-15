@@ -1,4 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+Author: Mitch Cox (+)
+
+Purpose: It is a common "testing use case" to simulate putting messages on middleware to test
+         more complex services on the other ends of middleware. This is designed to poll a given directory for files
+         and place them on the appropriate bus (topic,queue, subject etc.) on common middleware traffic platforms s
+
+Notes: There is no processing of the data within the files
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">

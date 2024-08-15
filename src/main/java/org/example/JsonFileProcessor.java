@@ -1,17 +1,12 @@
 package org.example;
 
-/* This will be needed if we add object mapper , see comment in field declaration
- in this particular class file */
-
-//import com.fasterxml.jackson.databind.ObjectMapper;
-
 import javax.jms.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
-//import java.nio.file.attribute.BasicFileAttributes;
+
 
 public class JsonFileProcessor {
 
@@ -66,9 +61,9 @@ public class JsonFileProcessor {
 
                         if (Files.isRegularFile(filePath) && fileName.toString().endsWith(".json")) {
                             System.out.println("Im processing a file");
-                            //sendFileToQueue(file);
-                           // moveFileToOutputDir(file);
-                           // processAndMoveFile(filePath, outputDir);
+                            sendFileToQueue(filePath);
+                            //moveFileToOutputDir(filePath);
+                                 processAndMoveFile(filePath, outputDir);
                         }
                     }
 
@@ -83,27 +78,36 @@ public class JsonFileProcessor {
         }
     }
 
-    private void sendFileToQueue(File file) throws JMSException, IOException {
+    private void sendFileToQueue(Path file) throws JMSException, IOException {
             Connection connection = connectionFactory.createConnection();
             connection.start();
             Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
             Queue queue = session.createQueue("FilePlayer");
             MessageProducer producer = session.createProducer(queue);
 
-            String jsonContent = new String(Files.readAllBytes(file.toPath()));
+            String jsonContent = new String(Files.readAllBytes(file));
             TextMessage message = session.createTextMessage(jsonContent);
             producer.send(message);
-
-            System.out.println("Sent file to queue: " + file.getName());
+            System.out.println("Sent file to queue: " + file);
 
     }
-
-    private void moveFileToOutputDir(File file) throws IOException {
+    /*
+    private void moveFileToOutputDir(Path file) throws IOException {
         Path targetPath = new File(outputDir, file.getName()).toPath();
         Files.move(file.toPath(), targetPath, StandardCopyOption.REPLACE_EXISTING);
-        System.out.println("Moved file to output directory: " + file.getName());
-    }
+        System.out.println("Moved file to output directory: " + file);
+    }*/
+    private static void processAndMoveFile(Path filePath, Path outputDir) {
+        try {
+            Path targetPath = outputDir.resolve(filePath.getFileName());
+            Files.move(filePath, targetPath, StandardCopyOption.REPLACE_EXISTING);
+            System.out.println("Moved file to: " + targetPath);
 
+        } catch (IOException e) {
+            System.err.println("Error processing file: " + filePath);
+            e.printStackTrace();
+        }
+    }
     public static void main(String[] args) {
         try {
             ConnectionFactory connectionFactory = JMSConfig.connectionFactory();
