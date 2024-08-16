@@ -105,7 +105,7 @@ public class JsonFileProcessor {
         }
 
     }
-    public void main(String[] args) {
+    public static void main(String[] args) {
         try {
             ConnectionFactory connectionFactory = JMSConfig.connectionFactory();
             String inputDir = "/home/bugeye2/IdeaProjects/FilePlayer/input";
@@ -114,7 +114,7 @@ public class JsonFileProcessor {
             processor.processFiles();
 
         } catch (Exception e) {
-            logger.error("Exception: " +e);
+            e.printStackTrace();
         }
     }
 }
