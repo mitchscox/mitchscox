@@ -1,5 +1,6 @@
 package org.example;
 
+import org.apache.logging.log4j.*;
 import javax.jms.*;
 import java.io.IOException;
 import java.nio.file.*;
@@ -13,7 +14,7 @@ public class JsonFileProcessor {
     private final String outputDir;
     private static final String INPUT_DIR = "/home/bugeye2/IdeaProjects/FilePlayer/input";
     private static final String OUTPUT_DIR = "/home/bugeye2/IdeaProjects/FilePlayer/output";
-
+    Logger logger = LogManager.getLogger();
     /* The following will be needed if we want to process the data here
      Such use cases would be header incrementing or file incrementing */
 
@@ -23,6 +24,7 @@ public class JsonFileProcessor {
         this.connectionFactory = connectionFactory;
         this.inputDir = inputDir;
         this.outputDir = outputDir;
+
         // see declarations comment
         //this.objectMapper = new ObjectMapper();
     }
@@ -39,16 +41,15 @@ public class JsonFileProcessor {
         try (WatchService watchService = FileSystems.getDefault().newWatchService()) {
             // todo check if files already exist
             inputDir.register(watchService, StandardWatchEventKinds.ENTRY_CREATE);
-            System.out.println("Created the watch service polling for :" +inputDir);
-            System.out.println("Files will be placed in : "+outputDir);
+            logger.info("Created the watch service for : " +inputDir);
             while (true) {
                 WatchKey key = watchService.poll(10, TimeUnit.SECONDS);
-                System.out.println("Polling event");
-                System.out.println("Key = " +key);
+                logger.info("Polling event ... ");
+
                 if (key != null) {
                     for (WatchEvent<?> event : key.pollEvents()) {
                         WatchEvent.Kind<?> kind = event.kind();
-                        System.out.println("Ive in the for loop");
+                        logger.info("Detected Event :" +event.kind());
                         if (kind == StandardWatchEventKinds.OVERFLOW) {
                             continue;
                         }
@@ -58,7 +59,6 @@ public class JsonFileProcessor {
                         Path filePath = inputDir.resolve(fileName);
 
                         if (Files.isRegularFile(filePath) && fileName.toString().endsWith(".json")) {
-                            System.out.println("Im processing a file");
                             sendFileToQueue(filePath);
                             processAndMoveFile(filePath, outputDir);
                         }
@@ -78,6 +78,7 @@ public class JsonFileProcessor {
     private void sendFileToQueue(Path file) throws JMSException, IOException {
             Connection connection = connectionFactory.createConnection();
             connection.start();
+            logger.info("Connection started: " +connection);
             Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
             Queue queue = session.createQueue("FilePlayer");
             MessageProducer producer = session.createProducer(queue);
@@ -85,27 +86,29 @@ public class JsonFileProcessor {
             String jsonContent = new String(Files.readAllBytes(file));
             TextMessage message = session.createTextMessage(jsonContent);
             producer.send(message);
-            System.out.println("Sent file to queue: " + file);
+          //  System.out.println("Sent file to queue: " + file);
+            logger.info("Sent file: "+file+"to queue:" +queue);
+            connection.close();
+            logger.info("Connection closed: "+ connection);
 
     }
 
-    private static void processAndMoveFile(Path filePath, Path outputDir) {
+    private void processAndMoveFile(Path filePath, Path outputDir) {
         try {
             Path targetPath = outputDir.resolve(filePath.getFileName());
             Files.move(filePath, targetPath, StandardCopyOption.REPLACE_EXISTING);
-            System.out.println("Moved file to: " + targetPath);
-
+            logger.info("Moved file: "+filePath+" to:" +targetPath);
         } catch (IOException e) {
-            System.err.println("Error processing file: " + filePath);
+            logger.error("Error processing file: " + filePath);
             e.printStackTrace();
         }
+
     }
     public static void main(String[] args) {
         try {
             ConnectionFactory connectionFactory = JMSConfig.connectionFactory();
             String inputDir = "/home/bugeye2/IdeaProjects/FilePlayer/input";
             String outputDir = "/home/bugeye2/IdeaProjects/FilePlayer/output";
-
             JsonFileProcessor processor = new JsonFileProcessor(connectionFactory, inputDir, outputDir);
             processor.processFiles();
 

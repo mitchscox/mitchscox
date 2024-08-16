@@ -24,7 +24,17 @@ Notes: There is no processing of the data within the files
     </properties>
     <dependencies>
 
-            <dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.17.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-jpl</artifactId>
+            <version>2.17.2</version>
+        </dependency>
+        <dependency>
                 <groupId>org.apache.activemq</groupId>
                 <artifactId>activemq-core</artifactId>
                 <version>5.7.0</version>
