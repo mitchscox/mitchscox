@@ -71,7 +71,8 @@ public class JsonFileProcessor {
                 }
             }
         } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+           logger.error("Exception: " +e);
+           // e.printStackTrace();
         }
     }
 
@@ -100,11 +101,11 @@ public class JsonFileProcessor {
             logger.info("Moved file: "+filePath+" to:" +targetPath);
         } catch (IOException e) {
             logger.error("Error processing file: " + filePath);
-            e.printStackTrace();
+            logger.error("Exception: " +e);
         }
 
     }
-    public static void main(String[] args) {
+    public void main(String[] args) {
         try {
             ConnectionFactory connectionFactory = JMSConfig.connectionFactory();
             String inputDir = "/home/bugeye2/IdeaProjects/FilePlayer/input";
@@ -113,7 +114,7 @@ public class JsonFileProcessor {
             processor.processFiles();
 
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Exception: " +e);
         }
     }
 }
