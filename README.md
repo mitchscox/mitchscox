@@ -1,7 +1,7 @@
 - 👋 Hi, I’m Mitch
-- 👀 I’m interested in test automation
-- 🌱 I’m currently learning java
-- 💞️ I’m looking to collaborate on anything test automation related    
+- 👀 I’m interested in test automation framework and test pack design
+- 🌱 I’m currently working on a microservices based test automation framework using EIP (Message based via Apache Camel , core java)
+- 💞️ I’m looking to collaborate on anything test automation / test pack design related    
 - 📫 How to reach me mitchscox@gmail.com
 
 <!---
